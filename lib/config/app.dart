@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:portfolio/pages/contact_page.dart';
-// import 'package:portfolio/pages/home_page.dart';
+import 'package:portfolio/pages/contact_pages.dart';
 import 'package:portfolio/theme/color_scheme.dart';
 
 class MyApp extends StatelessWidget {

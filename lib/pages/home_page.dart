@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:portfolio/components/text_button.dart';
-import 'package:portfolio/pages/contact_page.dart';
+import 'package:portfolio/pages/contact_pages.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
