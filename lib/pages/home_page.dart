@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:portfolio/components/text_button.dart';
-import 'package:portfolio/pages/contact_pages.dart';
+import 'package:portfolio/routes/app_pages.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -67,28 +68,26 @@ class _HomePageState extends State<HomePage> {
           actions: [
             MyTextButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                  ),
-                );
+                if (Get.currentRoute != AppPages.HOME) {
+                  Get.offNamed(AppPages.HOME);
+                }
               },
               text: "Home",
             ),
             const SizedBox(width: 10),
-            MyTextButton(onPressed: () {}, text: "Gallery"),
+            MyTextButton(
+                onPressed: () {
+                  if (Get.currentRoute != AppPages.GALLERY) {
+                    Get.offNamed(AppPages.GALLERY);
+                  }
+                },
+                text: "Gallery"),
             const SizedBox(width: 10),
             MyTextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ContactPage(),
-                    ),
-                  );
+                  if (Get.currentRoute != AppPages.ABOUT) {
+                    Get.offNamed(AppPages.ABOUT);
+                  }
                 },
                 text: "Contact"),
             const SizedBox(width: 10),
