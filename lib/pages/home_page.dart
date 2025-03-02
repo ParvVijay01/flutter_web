@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> words = ["Photographer", "Stargazer", "Selenophile"];
-  int _currentIndex = 0; // Track the current word index
+  int _currentIndex = 0;
   late Timer _timer;
 
   @override
@@ -24,23 +24,30 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _timer.cancel(); // Cancel the timer when the widget is disposed
+    _timer.cancel();
     super.dispose();
   }
 
   void _startWordAnimation() {
-    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       setState(() {
-        _currentIndex =
-            (_currentIndex + 1) % words.length; // Cycle through words
+        _currentIndex = (_currentIndex + 1) % words.length;
       });
     });
   }
 
+  void _navigateTo(String route) {
+    if (Get.currentRoute != route) {
+      Get.offNamed(route);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage("assets/images/bg.jpg"),
           fit: BoxFit.cover,
@@ -61,89 +68,96 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                 color: Theme.of(context).cardColor,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width * 0.03,
+                fontSize:
+                    screenWidth > 600 ? screenWidth * 0.03 : screenWidth * 0.06,
               ),
             ),
           ),
           actions: [
-            MyTextButton(
-              onPressed: () {
-                if (Get.currentRoute != AppPages.HOME) {
-                  Get.offNamed(AppPages.HOME);
-                }
-              },
-              text: "Home",
-            ),
-            const SizedBox(width: 10),
-            MyTextButton(
-                onPressed: () {
-                  if (Get.currentRoute != AppPages.GALLERY) {
-                    Get.offNamed(AppPages.GALLERY);
-                  }
-                },
-                text: "Gallery"),
-            const SizedBox(width: 10),
-            MyTextButton(
-                onPressed: () {
-                  if (Get.currentRoute != AppPages.ABOUT) {
-                    Get.offNamed(AppPages.ABOUT);
-                  }
-                },
-                text: "Contact"),
-            const SizedBox(width: 10),
+            if (screenWidth > 600) ...[
+              MyTextButton(
+                onPressed: () => _navigateTo(AppPages.HOME),
+                text: "Home",
+              ),
+              const SizedBox(width: 10),
+              MyTextButton(
+                onPressed: () => _navigateTo(AppPages.GALLERY),
+                text: "Gallery",
+              ),
+              const SizedBox(width: 10),
+              MyTextButton(
+                onPressed: () => _navigateTo(AppPages.ABOUT),
+                text: "Contact",
+              ),
+              const SizedBox(width: 10),
+            ] else ...[
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: PopupMenuButton<String>(
+                  icon: const Icon(Icons.menu, color: Colors.white),
+                  onSelected: _navigateTo,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: AppPages.HOME,
+                      child: const Text("Home"),
+                    ),
+                    PopupMenuItem(
+                      value: AppPages.GALLERY,
+                      child: const Text("Gallery"),
+                    ),
+                    PopupMenuItem(
+                      value: AppPages.ABOUT,
+                      child: const Text("Contact"),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
-                  child: Row(
-                    children: [
-                      Text(
-                        "I'm a ",
-                        style: TextStyle(
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 0, 40),
+              child: Row(
+                children: [
+                  const Text(
+                    "I'm a ",
+                    style: TextStyle(
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  ClipRect(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        final offsetAnimation = Tween<Offset>(
+                          begin: const Offset(0, 1),
+                          end: Offset.zero,
+                        ).animate(animation);
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                      child: Text(
+                        words[_currentIndex],
+                        key: ValueKey<int>(_currentIndex),
+                        style: const TextStyle(
                           fontSize: 30,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ClipRect(
-                        child: AnimatedSwitcher(
-                          duration:
-                              Duration(milliseconds: 5), // Animation duration
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) {
-                            final offsetAnimation = Tween<Offset>(
-                              begin:
-                                  Offset(0, 1), // Start sliding from the right
-                              end: Offset(0, 0), // End at the center
-                            ).animate(animation);
-
-                            return SlideTransition(
-                              position: offsetAnimation,
-                              child: child,
-                            );
-                          },
-                          child: Text(
-                            words[_currentIndex],
-                            key: ValueKey<int>(
-                                _currentIndex), // Unique key for each word
-                            style: TextStyle(
-                              fontSize: 30,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

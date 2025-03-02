@@ -41,7 +41,7 @@ class MyTextButton extends StatelessWidget {
           style: TextStyle(
             color: Theme.of(context).cardColor,
             fontWeight: FontWeight.w900,
-            fontSize: MediaQuery.of(context).size.width * 0.02,
+            fontSize: MediaQuery.of(context).size.width * 0.01,
           ),
         ),
       ),

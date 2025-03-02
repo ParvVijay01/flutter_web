@@ -21,8 +21,15 @@ class _ContactPageState extends State<ContactPage> {
     }
   }
 
+  void _navigateTo(String route) {
+    if (Get.currentRoute != route) {
+      Get.offNamed(route);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -44,37 +51,51 @@ class _ContactPageState extends State<ContactPage> {
               style: TextStyle(
                 color: Theme.of(context).cardColor,
                 fontWeight: FontWeight.bold,
-                fontSize: MediaQuery.of(context).size.width * 0.03,
+                fontSize: screenWidth > 600 ? screenWidth * 0.03 : screenWidth * 0.06,
               ),
             ),
           ),
           
             actions: [
-            MyTextButton(
-              onPressed: () {
-                if (Get.currentRoute != AppPages.HOME) {
-                  Get.offNamed(AppPages.HOME);
-                }
-              },
-              text: "Home",
-            ),
-            const SizedBox(width: 10),
-            MyTextButton(
-                onPressed: () {
-                  if (Get.currentRoute != AppPages.GALLERY) {
-                    Get.offNamed(AppPages.GALLERY);
-                  }
-                },
-                text: "Gallery"),
-            const SizedBox(width: 10),
-            MyTextButton(
-                onPressed: () {
-                  if (Get.currentRoute != AppPages.ABOUT) {
-                    Get.offNamed(AppPages.ABOUT);
-                  }
-                },
-                text: "Contact"),
-            const SizedBox(width: 10),
+            if (screenWidth > 600) ...[
+              MyTextButton(
+                onPressed: () => _navigateTo(AppPages.HOME),
+                text: "Home",
+              ),
+              const SizedBox(width: 10),
+              MyTextButton(
+                onPressed: () => _navigateTo(AppPages.GALLERY),
+                text: "Gallery",
+              ),
+              const SizedBox(width: 10),
+              MyTextButton(
+                onPressed: () => _navigateTo(AppPages.ABOUT),
+                text: "Contact",
+              ),
+              const SizedBox(width: 10),
+            ] else ...[
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: PopupMenuButton<String>(
+                  icon: const Icon(Icons.menu, color: Colors.white),
+                  onSelected: _navigateTo,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: AppPages.HOME,
+                      child: const Text("Home"),
+                    ),
+                    PopupMenuItem(
+                      value: AppPages.GALLERY,
+                      child: const Text("Gallery"),
+                    ),
+                    PopupMenuItem(
+                      value: AppPages.ABOUT,
+                      child: const Text("Contact"),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
         body: LayoutBuilder(
